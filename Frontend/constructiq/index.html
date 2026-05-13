@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/icons/icon-192x192.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta
+      name="description"
+      content="ConstructIQ — Intelligent Construction Project Management Platform"
+    />
+    <meta name="theme-color" content="#0A0A0F" />
+    <title>ConstructIQ — Construction Intelligence Platform</title>
+
+    <!-- PWA: Apple Touch Icon for iOS home screen -->
+    <link rel="apple-touch-icon" href="/icons/icon-192x192.svg" />
+
+    <!-- PWA: iOS-specific meta tags for standalone mode -->
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="ConstructIQ" />
+
+    <!-- PWA: Microsoft tile color -->
+    <meta name="msapplication-TileColor" content="#0A0A0F" />
+
+    <!-- PERF-C02: Font preconnect + preload eliminates 3-request waterfall -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="preload"
+      as="style"
+      href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap"
+    />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap"
+    />
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

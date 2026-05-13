@@ -1,0 +1,35 @@
+# Environments
+.env
+.env.local
+.env.development
+.env.test
+.env.production
+.venv/
+venv/
+env/
+ENV/
+
+# Python / Django
+__pycache__/
+*.py[cod]
+*$py.class
+*.sqlite3
+celerybeat-schedule*
+media/
+staticfiles/
+.mypy_cache/
+.ruff_cache/
+
+# Node / React
+node_modules/
+dist/
+build/
+.npm/
+npm-debug.log*
+.eslintcache
+
+# IDE / OS
+.vscode/
+.idea/
+*.DS_Store
+Thumbs.db

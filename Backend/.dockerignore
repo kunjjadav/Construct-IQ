@@ -1,0 +1,63 @@
+# ═══════════════════════════════════════════════════════════
+#  .dockerignore — Exclude files from Docker build context
+#  Reduces build speed and prevents secrets from leaking
+#  into the image layers.
+# ═══════════════════════════════════════════════════════════
+
+# Version control
+.git
+.gitignore
+
+# Python artifacts
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.egg-info/
+*.egg
+dist/
+build/
+
+# Virtual environment (we build our own inside Docker)
+.venv
+venv
+env
+
+# IDE / Editor files
+.vscode
+.idea
+*.swp
+*.swo
+*~
+
+# Environment files (SECRETS — never bake into images)
+.env
+.env.*
+!.env.example
+
+# Docker files (no need to copy Docker configs into the image)
+Dockerfile
+docker-compose*.yml
+.dockerignore
+
+# Test output and debug files
+test_output.txt
+utf8.txt
+*.log
+
+# OS junk
+.DS_Store
+Thumbs.db
+
+# SQLite database (we use Postgres in Docker)
+db.sqlite3
+
+# Media uploads (mounted as volume, not baked into image)
+media/
+projects/*/photos/
+projects/*/thumbs/
+projects/*/docs/
+
+# Node / Frontend (if accidentally placed here)
+node_modules/

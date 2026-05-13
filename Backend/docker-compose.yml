@@ -1,0 +1,137 @@
+services:
+
+  db:
+    image: postgres:15-alpine
+    container_name: constructiq_postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: constructiq
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d constructiq"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    networks:
+      - constructiq-net
+
+  redis:
+    image: redis:7-alpine
+    container_name: constructiq_redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - constructiq-net
+
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: constructiq_backend
+    restart: unless-stopped
+    environment:
+      SECRET_KEY: "django-docker-secret-key-change-in-production"
+      DEBUG: "True"
+      ALLOWED_HOSTS: "localhost,127.0.0.1,0.0.0.0,backend"
+      DATABASE_URL: "postgres://postgres:password@db:5432/constructiq"
+      REDIS_URL: "redis://redis:6379/0"
+      CELERY_BROKER_URL: "redis://redis:6379/0"
+      CELERY_RESULT_BACKEND: "redis://redis:6379/0"
+      FRONTEND_URL: "http://localhost:3000"
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/app
+      - ./media:/app/media
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - constructiq-net
+
+  celery_worker:
+    build:
+      context: .
+    container_name: constructiq_celery_worker
+    restart: unless-stopped
+    command: celery -A config worker --loglevel=info
+    environment:
+      SECRET_KEY: "django-docker-secret-key-change-in-production"
+      DEBUG: "True"
+      ALLOWED_HOSTS: "localhost,127.0.0.1,0.0.0.0,backend"
+      DATABASE_URL: "postgres://postgres:password@db:5432/constructiq"
+      REDIS_URL: "redis://redis:6379/0"
+      CELERY_BROKER_URL: "redis://redis:6379/0"
+      CELERY_RESULT_BACKEND: "redis://redis:6379/0"
+    volumes:
+      - .:/app
+      - ./media:/app/media
+    depends_on:
+      - db
+      - redis
+      - backend
+    networks:
+      - constructiq-net
+
+  celery_beat:
+    build:
+      context: .
+    container_name: constructiq_celery_beat
+    restart: unless-stopped
+    command: celery -A config beat --loglevel=info
+    environment:
+      SECRET_KEY: "django-docker-secret-key-change-in-production"
+      DEBUG: "True"
+      ALLOWED_HOSTS: "localhost,127.0.0.1,0.0.0.0,backend"
+      DATABASE_URL: "postgres://postgres:password@db:5432/constructiq"
+      REDIS_URL: "redis://redis:6379/0"
+      CELERY_BROKER_URL: "redis://redis:6379/0"
+      CELERY_RESULT_BACKEND: "redis://redis:6379/0"
+    volumes:
+      - .:/app
+    depends_on:
+      - db
+      - redis
+      - backend
+    networks:
+      - constructiq-net
+
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: constructiq_pgadmin
+    restart: unless-stopped
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@constructiq.dev
+      PGADMIN_DEFAULT_PASSWORD: admin
+    ports:
+      - "5050:80"
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - constructiq-net
+
+volumes:
+  postgres_data:
+  redis_data:
+  media_data:
+
+networks:
+  constructiq-net:
+    driver: bridge

@@ -1,0 +1,414 @@
+/* ============================================================
+   ConstructIQ — Global Design System
+   Wave 1, Task 1: Design Tokens + Typography + Utilities
+   ============================================================ */
+
+/* ---------- 1. GOOGLE FONTS — Inter Variable ---------- */
+/* Font loaded via <link rel="preload"> in index.html for faster FCP (PERF-C02) */
+@import "tailwindcss";
+
+/* ---------- 2. TAILWIND v4 THEME — ALL DESIGN TOKENS ---------- */
+@theme {
+  /* --- Color Palette (OKLCH — perceptually uniform, no halation) --- */
+
+  /* Backgrounds — elevation via lightness, NOT shadows */
+  --color-bg-app: oklch(0.14 0.01 285);
+  /* Deepest canvas     #0A0A0F equiv */
+  --color-bg-surface: oklch(0.18 0.01 285);
+  /* Cards, panels      #111116 equiv */
+  --color-bg-elevated: oklch(0.22 0.01 285);
+  /* Modals, dropdowns  #1A1A21 equiv */
+  --color-bg-interactive: oklch(0.26 0.01 285);
+  /* Hover states    */
+
+  /* Typography — off-white prevents halation on dark backgrounds */
+  --color-text-primary: oklch(0.95 0 0);
+  /* Headings          ~#F2F2F2       */
+  --color-text-secondary: oklch(0.75 0 0);
+  /* Body, labels      ~#ABABAB       */
+  --color-text-muted: oklch(0.55 0 0);
+  /* Captions, meta    ~#6E6E6E       */
+  --color-text-disabled: oklch(0.4 0 0);
+  /* Disabled states                  */
+
+  /* Semantic Accent Colors — SPARSE use only */
+  --color-accent-cyan: oklch(0.72 0.15 200);
+  /* Active, primary CTAs   */
+  --color-accent-cyan-dim: oklch(0.72 0.08 200 / 0.15);
+  /* Cyan bg tint  */
+  --color-accent-emerald: oklch(0.72 0.15 150);
+  /* Approved, success      */
+  --color-accent-emerald-dim: oklch(0.72 0.08 150 / 0.15);
+  /* Emerald bg  */
+  --color-accent-amber: oklch(0.78 0.15 70);
+  /* Pending, warnings      */
+  --color-accent-amber-dim: oklch(0.78 0.08 70 / 0.15);
+  /* Amber bg     */
+  --color-accent-red: oklch(0.58 0.2 25);
+  /* Rejected, destructive  */
+  --color-accent-red-dim: oklch(0.58 0.1 25 / 0.15);
+  /* Red bg       */
+  --color-accent-blue: oklch(0.68 0.15 240);
+  /* Open, informational    */
+  --color-accent-blue-dim: oklch(0.68 0.08 240 / 0.15);
+  /* Blue bg      */
+  --color-accent-purple: oklch(0.68 0.15 300);
+  /* Planning, special      */
+
+  /* Borders — alpha-based so they blend on any surface */
+  --color-border-subtle: color-mix(in oklch, white 6%, transparent);
+  /* Dividers   */
+  --color-border-strong: color-mix(in oklch, white 12%, transparent);
+  /* Inputs     */
+  --color-border-focus: oklch(0.72 0.15 200);
+  /* Focus ring */
+
+  /* --- Typography Scale --- */
+  --font-sans: "Inter", system-ui, -apple-system, sans-serif;
+
+  /* --- Spacing Scale (8pt grid) --- */
+  --spacing-px: 1px;
+  --spacing-0: 0px;
+  --spacing-1: 4px;
+  /* 0.5 × base */
+  --spacing-2: 8px;
+  /* 1  × base  */
+  --spacing-3: 12px;
+  --spacing-4: 16px;
+  /* 2  × base  */
+  --spacing-5: 20px;
+  --spacing-6: 24px;
+  /* 3  × base  */
+  --spacing-8: 32px;
+  /* 4  × base  */
+  --spacing-10: 40px;
+  --spacing-12: 48px;
+  /* 6  × base  */
+  --spacing-16: 64px;
+  /* 8  × base  */
+  --spacing-20: 80px;
+  --spacing-24: 96px;
+
+  /* --- Border Radius Scale --- */
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+  --radius-2xl: 24px;
+  --radius-full: 9999px;
+
+  /* --- Animation Durations --- */
+  --duration-fast: 150ms;
+  --duration-normal: 200ms;
+  --duration-slow: 350ms;
+}
+
+/* ---------- 3. HTML ROOT — Browser Dark Mode + Font Engine ---------- */
+:root {
+  color-scheme: dark;
+  /* Forces browser scrollbars and native UI into dark mode */
+
+  /* Apply Inter globally with performance-optimized rendering */
+  font-family: var(--font-sans);
+  font-optical-sizing: auto;
+
+  /* CRITICAL: OpenType features for enterprise data density
+     cv11 = single-storey 'a' (cleaner in dense labels)
+     tnum = tabular numbers (aligned columns in financial tables)
+     ss03 = disambiguates I/l/1 (critical for codes and IDs)
+  */
+  font-feature-settings:
+    "cv11" 1,
+    "tnum" 1,
+    "ss03" 1;
+
+  /* Sub-pixel rendering — eliminates jagged text edges on macOS/Windows */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+/* ---------- 4. BODY — Canvas Background ---------- */
+html,
+body {
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  background-color: var(--color-bg-app);
+  color: var(--color-text-primary);
+}
+
+/* ---------- 5. UNIVERSAL BOX MODEL ---------- */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+/* ---------- 6. FOCUS MANAGEMENT — Accessibility (WCAG AA) ----------
+   Remove chaotic default browser outlines (they appear on mouse click too).
+   Replace with a clean, consistent ring ONLY on keyboard navigation.
+   This passes WCAG 2.1 Success Criterion 2.4.7.
+*/
+*:focus {
+  outline: none;
+}
+
+*:focus-visible {
+  outline: 2px solid var(--color-border-focus);
+  outline-offset: 2px;
+  border-radius: var(--radius-sm);
+}
+
+/* ---------- 7. TYPOGRAPHY BASE CLASSES ---------- */
+/* These match the typographic roles from our design system spec */
+
+.display {
+  font-size: 3rem;
+  /* 48px */
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+}
+
+.heading-lg {
+  font-size: 1.5rem;
+  /* 24px */
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  line-height: 1.3;
+}
+
+.heading-sm {
+  font-size: 1.125rem;
+  /* 18px */
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  line-height: 1.4;
+}
+
+.body-text {
+  font-size: 1rem;
+  /* 16px */
+  font-weight: 400;
+  letter-spacing: 0;
+  line-height: 1.6;
+}
+
+.data-text {
+  /* Financial tables — tnum enforced for strict column alignment */
+  font-size: 0.875rem;
+  /* 14px */
+  font-weight: 400;
+  letter-spacing: 0;
+  line-height: 1.5;
+  font-variant-numeric: tabular-nums;
+}
+
+.meta-text {
+  font-size: 0.75rem;
+  /* 12px */
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  line-height: 1.5;
+  color: var(--color-text-muted);
+}
+
+/* ---------- 8. GLASS PANEL UTILITY — Glassmorphism (used sparingly) ----------
+   Used for: modals, command palette, notification dropdown, photo overlays.
+   The backdrop-filter is the KEY property — it blurs the content behind the element.
+   It ONLY works if the element has a transparent background.
+*/
+.glass-panel {
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  background: color-mix(in oklch, white 3%, transparent);
+  border: 1px solid var(--color-border-subtle);
+  box-shadow:
+    /* Inner top highlight — simulates light catching the top edge */
+    inset 0 1px 1px color-mix(in oklch, white 10%, transparent),
+    /* Outer depth shadow */ 0 8px 32px
+      color-mix(in oklch, black 40%, transparent);
+}
+
+/* Accessibility: if user has requested reduced transparency in OS settings,
+   disable the blur and make the bg more opaque so content is readable */
+@media (prefers-reduced-transparency: reduce) {
+  .glass-panel {
+    backdrop-filter: none;
+    background: var(--color-bg-elevated);
+  }
+}
+
+/* ---------- 9. SCROLLBAR STYLING — Dark Mode Native Scrollbars ---------- */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-border-strong);
+  border-radius: var(--radius-full);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-text-disabled);
+}
+
+/* ---------- 10. SELECTION — Highlight Color ---------- */
+::selection {
+  background: var(--color-accent-cyan-dim);
+  color: var(--color-text-primary);
+}
+
+/* ---------- 11. CENTRALIZED ANIMATIONS (PERF-H01) ---------- */
+/* Moved from inline <style> tags in Modal, FocusView, NotificationBell, Toast, LoginPage.
+   Eliminates CSSOM recalculation on every component render. */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.98);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes slideLeft {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+
+  40% {
+    opacity: 1;
+  }
+
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideOutRight {
+  from {
+    transform: translateX(0);
+    opacity: 1;
+  }
+
+  60% {
+    opacity: 0.5;
+  }
+
+  to {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+}
+
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+  }
+
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+
+  to {
+    opacity: 0;
+    transform: translateY(20px) scale(0.98);
+  }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.3s ease-out forwards;
+}
+
+.animate-fade-out {
+  animation: fadeOut 0.25s ease-in forwards;
+}
+
+.animate-fade-in-down {
+  animation: fadeInDown 0.15s ease-out forwards;
+}
+
+.animate-slide-up {
+  animation: slideUp 0.5s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+}
+
+.animate-slide-down {
+  animation: slideDown 0.4s ease-in-out forwards;
+}
+
+.animate-slide-left {
+  animation: slideLeft 0.4s cubic-bezier(0.32, 0.72, 0, 1) forwards;
+}
+
+.animate-slide-out-right {
+  animation: slideOutRight 0.3s cubic-bezier(0.32, 0.72, 0, 1) forwards;
+}
+
+.animate-slide-in {
+  animation: slideIn 0.5s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+}
+
+/* ---------- MOBILE: Hidden Scrollbar Utility ---------- */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  /* IE/Edge */
+  scrollbar-width: none;
+  /* Firefox */
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+  /* Chrome/Safari/Opera */
+}
